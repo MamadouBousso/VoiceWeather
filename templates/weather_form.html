@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Choisir une ville ou des coordonnées</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+        .form-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            padding: 2.5rem 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .form-title {
+            font-size: 2rem;
+            color: #2d3a4b;
+            margin-bottom: 1.2rem;
+        }
+        select, button, input[type="number"] {
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #b0c4de;
+            margin: 0.5rem 0;
+        }
+        button {
+            background: #66a6ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #4e8edb;
+        }
+        .form-section {
+            margin-bottom: 1rem;
+        }
+        label {
+            font-size: 1rem;
+            color: #2d3a4b;
+        }
+        .audio-choice {
+            margin: 1rem 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+    </style>
+    <script>
+        function toggleFormFields() {
+            var mode = document.getElementById('mode').value;
+            document.getElementById('ville-section').style.display = (mode === 'ville') ? 'block' : 'none';
+            document.getElementById('coords-section').style.display = (mode === 'coords') ? 'block' : 'none';
+        }
+    </script>
+</head>
+<body onload="toggleFormFields()">
+    <div class="form-container">
+        <div class="form-title">Obtenir la météo</div>
+        <form id="weatherForm" method="get">
+            <div class="form-section">
+                <label for="mode">Choisissez le mode de recherche :</label><br>
+                <select id="mode" name="mode" onchange="toggleFormFields()">
+                    <option value="ville">Par ville</option>
+                    <option value="coords">Par coordonnées</option>
+                </select>
+            </div>
+            <div class="form-section" id="ville-section">
+                <label for="location">Ville :</label><br>
+                <select name="location" id="location">
+                    <option value="Paris">Paris</option>
+                    <option value="Marseille">Marseille</option>
+                    <option value="Lyon">Lyon</option>
+                    <option value="Toulouse">Toulouse</option>
+                    <option value="Nice">Nice</option>
+                    <option value="Dakar">Dakar</option>
+                    <option value="New York">New York</option>
+                    <option value="Tokyo">Tokyo</option>
+                    <option value="Berlin">Berlin</option>
+                    <option value="Londres">Londres</option>
+                    <option value="Montréal">Montréal</option>
+                    <option value="Abidjan">Abidjan</option>
+                    <option value="Bamako">Bamako</option>
+                    <option value="Alger">Alger</option>
+                    <option value="Casablanca">Casablanca</option>
+                </select>
+            </div>
+            <div class="form-section" id="coords-section" style="display:none;">
+                <label for="lat">Latitude :</label><br>
+                <input type="number" step="any" name="lat" id="lat" placeholder="Ex: 48.8566"><br>
+                <label for="lon">Longitude :</label><br>
+                <input type="number" step="any" name="lon" id="lon" placeholder="Ex: 2.3522"><br>
+            </div>
+            <div class="audio-choice">
+                <input type="checkbox" id="audio" name="audio" value="1">
+                <label for="audio">Obtenir la réponse en audio</label>
+            </div>
+            <button type="submit">Voir la météo</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('weatherForm').onsubmit = function(e) {
+            var mode = document.getElementById('mode').value;
+            if (mode === 'ville') {
+                this.action = '/weather/location';
+                document.getElementById('location').required = true;
+                document.getElementById('lat').required = false;
+                document.getElementById('lon').required = false;
+            } else {
+                this.action = '/weather/coordinates';
+                document.getElementById('location').required = false;
+                document.getElementById('lat').required = true;
+                document.getElementById('lon').required = true;
+            }
+        };
+    </script>
+</body>
+</html> 

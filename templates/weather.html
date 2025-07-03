@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Météo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+        .weather-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            padding: 2.5rem 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        .weather-title {
+            font-size: 2rem;
+            color: #2d3a4b;
+            margin-bottom: 1.2rem;
+        }
+        .weather-reply {
+            font-size: 1.2rem;
+            color: #3a4a5d;
+            margin-bottom: 1.5rem;
+        }
+        .weather-details {
+            font-size: 1rem;
+            color: #5a6a7d;
+            background: #f2f6fa;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+        }
+        .weather-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        .weather-table td {
+            padding: 0.4rem 0.6rem;
+            text-align: left;
+        }
+        .weather-table td.label {
+            font-weight: bold;
+            color: #2d3a4b;
+            width: 40%;
+        }
+        .flag {
+            font-size: 2rem;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+        .back-btn {
+            display: inline-block;
+            margin: 1.5rem auto 0 auto;
+            padding: 0.5rem 1.2rem;
+            background: #66a6ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .back-btn:hover {
+            background: #4e8edb;
+        }
+        .audio-player {
+            margin: 1.2rem auto 0 auto;
+        }
+        .audio-waiting {
+            margin: 1.2rem auto 0 auto;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <div class="weather-title">
+            🌤️ Météo du jour
+            {% if donnees.pays %}
+                <span class="flag">{{ donnees.pays | country_flag }}</span>
+            {% endif %}
+        </div>
+        <div class="weather-reply">{{ reponse }}</div>
+        {% if audio_url %}
+        <div class="audio-player" id="audio-block">
+            <audio id="audio-player" controls style="display:none;">
+                <source src="{{ audio_url }}?v={{ range(1000)|random }}" type="audio/mpeg">
+                Votre navigateur ne supporte pas la lecture audio.
+            </audio>
+            <div class="audio-waiting" id="audio-waiting">Audio en cours de génération...</div>
+        </div>
+        <script>
+        function checkAudio() {
+            var audio = document.getElementById('audio-player');
+            var waiting = document.getElementById('audio-waiting');
+            fetch(audio.querySelector('source').src, {method: 'HEAD'}).then(function(resp) {
+                if (resp.ok) {
+                    audio.style.display = '';
+                    waiting.style.display = 'none';
+                } else {
+                    setTimeout(checkAudio, 2000);
+                }
+            }).catch(function() {
+                setTimeout(checkAudio, 2000);
+            });
+        }
+        checkAudio();
+        </script>
+        {% endif %}
+        <div class="weather-details">
+            <table class="weather-table">
+                <tr><td class="label">Ville :</td><td>{{ donnees.ville }}</td></tr>
+                {% if donnees.pays %}<tr><td class="label">Pays :</td><td>{{ donnees.pays }}</td></tr>{% endif %}
+                <tr><td class="label">Température :</td><td>{{ donnees.temperature }}</td></tr>
+                <tr><td class="label">Condition :</td><td>{{ donnees.condition }}</td></tr>
+                {% if donnees.vent %}<tr><td class="label">Vent :</td><td>{{ donnees.vent }}</td></tr>{% endif %}
+                {% if donnees.latitude and donnees.longitude %}
+                <tr><td class="label">Latitude :</td><td>{{ donnees.latitude }}</td></tr>
+                <tr><td class="label">Longitude :</td><td>{{ donnees.longitude }}</td></tr>
+                {% endif %}
+            </table>
+        </div>
+        <a href="/" class="back-btn">&#8592; Retour au choix de la ville</a>
+    </div>
+</body>
+</html> 
